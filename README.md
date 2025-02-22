@@ -119,3 +119,32 @@ service.interceptors.response.use(
 
 export default service
 ```
+
+#### 封装API请求
+- src/api/auth.ts
+```js
+import request from '@/utils/request'
+
+export const login = (data: { email: string; password: string }) => request.post('/reqres/login', data)
+```
+- src/api/post.ts
+```js
+import request from '@/utils/request'
+
+export const getPosts = () => request.get('/api/posts')
+export const createPost = (data: any) => request.post('/api/posts', data)
+export const updatePost = (id: number, data: any) => request.put(`/api/posts/${id}`, data)
+export const deletePost = (id: number) => request.delete(`/api/posts/${id}`)
+```
+- 最后通过src/api/index.ts统一暴露出去给业务方使用，以便统一管理
+```js
+import { login } from './auth'
+// 导出 post中的所有方法
+import * as post from './post'
+
+// index只给一个出口
+export default {
+    login,
+    ...post
+}
+```
