@@ -173,4 +173,49 @@ export const useUserStore = defineStore('user', {
 })
 ```
 
+#### 路由配置
+-- 设置路由 src/router/index.ts
+```js
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/',
+    redirect: '/posts'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/LoginView.vue')
+  },
+  {
+    path: '/posts',
+    name: 'PostList',
+    component: () => import('@/views/PostListView.vue')
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+router.beforeEach((to) => {
+  const isAuthenticated = localStorage.getItem('token')
+  if (to.name !== 'Login' && !isAuthenticated) {
+    return { name: 'Login' }
+  }
+})
+
+export default router
+```
+
+- 设置路由出口 src/App.vue
+```js
+<script setup lang="ts">
+</script>
+
+<template>
+  <router-view />
+</template>
 ```
