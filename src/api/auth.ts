@@ -1,3 +1,4 @@
 import request from '@/utils/request'
+import type { LoginParams, LoginResponse } from '@/types/auth'
 
-export const login = (data: { email: string; password: string }) => request.post('/reqres/login', data)
+export const login = (data: LoginParams) => request.post<LoginResponse>('/reqres/login', data)

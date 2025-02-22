@@ -143,6 +143,22 @@ import { ElMessage } from 'element-plus'
 interface CustomAxiosInstance extends AxiosInstance {
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
   // 其他方法同理（post、put 等）
+  // POST
+  post<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<T>
+  
+  // PUT
+  put<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<T>
+  
+  // DELETE
+  delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T>
 }
 
 const service: CustomAxiosInstance = axios.create({
@@ -185,8 +201,21 @@ export default service
 - src/api/auth.ts
 ```js
 import request from '@/utils/request'
+import type { LoginParams, LoginResponse } from '@/types/auth'
 
-export const login = (data: { email: string; password: string }) => request.post('/reqres/login', data)
+export const login = (data: LoginParams) => request.post<LoginResponse>('/reqres/login', data)
+```
+- src/types/auth.ts 根据接口返回，定义TS接口类型
+```js
+// 定义类型
+export interface LoginParams {
+    email: string
+    password: string
+}
+
+export interface LoginResponse {
+    token: string
+}
 ```
 - src/api/post.ts
 ```js

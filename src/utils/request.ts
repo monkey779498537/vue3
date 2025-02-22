@@ -5,6 +5,22 @@ import { ElMessage } from 'element-plus'
 interface CustomAxiosInstance extends AxiosInstance {
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
   // 其他方法同理（post、put 等）
+  // POST
+  post<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<T>
+  
+  // PUT
+  put<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<T>
+  
+  // DELETE
+  delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T>
 }
 
 const service: CustomAxiosInstance = axios.create({
