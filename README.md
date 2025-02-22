@@ -22,3 +22,21 @@ src/
 ├─ types/        // TS类型定义 如果是vue3 并使用TS时
 └─ App.vue
 main.ts
+
+
+配置路径别名：@
+- vue3已经支持路径别名，无需额外安装
+```js
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    }
+  }
+});
+```
