@@ -178,17 +178,34 @@ export const login = (data: { email: string; password: string }) => request.post
 - src/api/post.ts
 ```js
 import request from '@/utils/request'
+import type { Post } from '@/types/post'
 
 export const getPosts = () => request.get('/api/posts')
 export const createPost = (data: any) => request.post('/api/posts', data)
 export const updatePost = (id: number, data: any) => request.put(`/api/posts/${id}`, data)
 export const deletePost = (id: number) => request.delete(`/api/posts/${id}`)
+
+// 导出类型给其他组件使用
+export type { Post }
 ```
-- 最后通过src/api/index.ts统一暴露出去给业务方使用，以便统一管理
+- src/types/post.ts 根据接口返回，定义TS接口类型
+```js
+// 定义文章数据结构（根据 JSONPlaceholder 返回的实际数据结构）
+export interface Post {
+    id: number
+    userId: number
+    title: string
+    body: string
+}
+```
+- src/api/index.ts 统一暴露出去给业务方使用，以便统一管理
 ```js
 import { login } from './auth'
 // 导出 post中的所有方法
 import * as post from './post'
+
+// 当使用通配符导入并导出为对象时，类型不会被自动包含进去，因为类型在编译后会被擦除，所以需要显式导出类型。
+export type { Post } from './post'
 
 // index只给一个出口
 // 注意 这里是 默认导出 所以这里使用的时候不能直接解构
