@@ -148,3 +148,29 @@ export default {
     ...post
 }
 ```
+
+#### 全局状态管理 Pinia
+```js
+// src/stores/user.ts
+import { defineStore } from 'pinia'
+import { login } from '@/api/auth'
+
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    token: localStorage.getItem('token') || ''
+  }),
+  actions: {
+    async loginUser(credentials: { email: string; password: string }) {
+      const { token } = await login(credentials)
+      this.token = token
+      localStorage.setItem('token', token)
+    },
+    logout() {
+      this.token = ''
+      localStorage.removeItem('token')
+    }
+  }
+})
+```
+
+```
