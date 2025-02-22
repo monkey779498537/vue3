@@ -71,6 +71,23 @@ export default defineConfig({
   }
 });
 ```
+- 额外注意：
+1. 配置了TS模块，需要对TS也做别名配置，vite.config.ts 不对TS生效
+2. 当有tsconfig.app.json 和 tsconfig.json文件时，需要设置到 tsconfig.app.json文件中
+```js
+// tsconfig.app.json
+{
+  compilerOptions: {
+    // 核心代码
+    "baseUrl": ".",  // 设置根目录为基准路径，所有路径解析的起点
+    "paths": {       // 定义路径映射规则
+      "@/*": [       // 当检测到以 @/ 开头的路径时
+        "./src/*"    // 映射到项目根目录下的 src 目录
+      ]
+    }
+  }
+}
+```
 
 #### 配置代理
 - 使用网上的公开免费api做测试练手
