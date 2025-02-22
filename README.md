@@ -16,6 +16,15 @@ npm install element-plus @element-plus/icons-vue
 npm install eslint prettier eslint-plugin-vue -D
 ```
 
+#### 安装辅助依赖
+- 引入path模块时的type依赖，否则在编译打包时，TS检测识别不了path相关内容
+- 当你需要 import path from 'path' 时需要处理
+- 原因
+  - 通常是因为path是 Node.js 内置模块，而 Vite 默认运行在浏览器环境中，TypeScript 可能无法识别path模块的类型
+```js
+npm install --save-dev @types/node
+```
+
 #### 挂载组件
 - `src/main.ts`: 下载好的组件需要挂载到vue实例上进行使用
 ```js
