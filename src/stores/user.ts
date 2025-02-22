@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { login } from '@/api'
+import api from '@/api'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -7,7 +7,7 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async loginUser(credentials: { email: string; password: string }) {
-      const { token } = await login(credentials)
+      const { token } = await api.login(credentials)
       this.token = token
       localStorage.setItem('token', token)
     },

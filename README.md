@@ -165,6 +165,7 @@ import { login } from './auth'
 import * as post from './post'
 
 // index只给一个出口
+// 注意 这里是 默认导出 所以这里使用的时候不能直接解构
 export default {
     login,
     ...post
@@ -175,7 +176,7 @@ export default {
 ```js
 // src/stores/user.ts
 import { defineStore } from 'pinia'
-import { login } from '@/api/auth'
+import api from '@/api'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -183,7 +184,7 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async loginUser(credentials: { email: string; password: string }) {
-      const { token } = await login(credentials)
+      const { token } = await api.login(credentials)
       this.token = token
       localStorage.setItem('token', token)
     },
@@ -239,5 +240,215 @@ export default router
 
 <template>
   <router-view />
+</template>
+```
+
+#### 业务代码
+- 登陆页处理 src/components/LoginView.vue
+```js
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
+
+const router = useRouter();
+const userStore = useUserStore();
+const form = ref({
+  email: "eve.holt@reqres.in",
+  password: "cityslicka",
+});
+
+const handleLogin = async () => {
+  await userStore.loginUser(form.value);
+  router.push("/posts");
+};
+</script>
+
+<template>
+  <div class="login-container">
+    <h2>用户登录</h2>
+    <el-input v-model="form.email" placeholder="请输入邮箱" />
+    <el-input
+      v-model="form.password"
+      type="password"
+      placeholder="请输入密码"
+      style="margin: 20px 0"
+    />
+    <el-button type="primary" @click="handleLogin">立即登录</el-button>
+    <p class="tip">使用测试账号直接登录</p>
+  </div>
+</template>
+
+<style scoped>
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.tip {
+  color: #666;
+  font-size: 12px;
+  margin-top: 15px;
+}
+</style>
+```
+
+- 详情页 src/components/PostListView.vue
+```js
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { ElMessageBox } from 'element-plus'
+import PostForm from '@/components/PostForm.vue'
+import api, { type Post } from '@/api'
+
+const posts = ref<Post[]>([])
+const loading = ref(false)
+const showDialog = ref(false)
+const currentPost = ref<Post | null>(null)
+
+// 加载数据
+const loadData = async () => {
+  loading.value = true
+  posts.value = await api.getPosts()
+  loading.value = false
+}
+
+// 删除确认
+const handleDelete = async (id: number) => {
+  await ElMessageBox.confirm('确认删除该文章吗？', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+  await api.deletePost(id)
+  posts.value = posts.value.filter(post => post.id !== id)
+}
+
+// 打开编辑对话框
+const openEdit = (post: Post) => {
+  currentPost.value = post
+  showDialog.value = true
+}
+
+onMounted(loadData)
+</script>
+
+<template>
+  <div class="container">
+    <div class="header">
+      <h1>文章列表</h1>
+      <el-button type="primary" @click="showDialog = true">新增文章</el-button>
+    </div>
+
+    <el-table :data="posts.slice(0,10)" v-loading="loading">
+      <el-table-column prop="id" label="ID" width="80" />
+      <el-table-column prop="title" label="标题" width="180" show-overflow-tooltip/>
+      <el-table-column prop="body" label="内容" width="180" show-overflow-tooltip/>
+      <el-table-column label="操作" width="180">
+        <template #default="{ row }">
+          <el-button size="small" @click="openEdit(row)">编辑</el-button>
+          <el-button 
+            size="small" 
+            type="danger"
+            @click="handleDelete(row.id)"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog v-model="showDialog" :title="currentPost ? '编辑文章' : '新建文章'">
+      <PostForm 
+        :edit-data="currentPost" 
+        @submit="() => {
+          loadData()
+          showDialog = false
+          currentPost = null
+        }"
+      />
+    </el-dialog>
+  </div>
+</template>
+
+<style scoped>
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+</style>
+```
+
+- 编辑组件弹层 src/components/PostForm.vue
+```js
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import api from '@/api'
+
+const props = defineProps<{
+  editData?: {
+    id: number
+    title: string
+    body: string
+  } | null
+}>()
+
+const emit = defineEmits(['submit'])
+
+const form = ref({
+  title: '',
+  body: ''
+})
+
+watch(() => props.editData, (newVal) => {
+  if (newVal) {
+    form.value = { title: newVal.title, body: newVal.body }
+  } else {
+    form.value = { title: '', body: '' }
+  }
+})
+
+const handleSubmit = async () => {
+  try {
+    if (props.editData) {
+      await api.updatePost(props.editData.id, form.value)
+      ElMessage.success('修改成功')
+    } else {
+      await api.createPost(form.value)
+      ElMessage.success('创建成功')
+    }
+    emit('submit')
+  } catch (error) {
+    ElMessage.error('操作失败')
+  }
+}
+</script>
+
+<template>
+  <el-form :model="form" label-width="80px">
+    <el-form-item label="标题">
+      <el-input v-model="form.title" />
+    </el-form-item>
+    <el-form-item label="内容">
+      <el-input v-model="form.body" type="textarea" rows="4" />
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="handleSubmit">
+        {{ editData ? '保存修改' : '立即创建' }}
+      </el-button>
+    </el-form-item>
+  </el-form>
 </template>
 ```

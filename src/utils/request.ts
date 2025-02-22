@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -22,6 +23,12 @@ service.interceptors.response.use(
     if (error.response?.status === 401) {
         localStorage.removeItem('token')
         window.location.href = '/login'
+    } else if (error.response?.status === 400) {
+      ElMessage({
+        showClose: true,
+        message: error.response?.data?.error,
+        type: 'error',
+      })
     }
     return Promise.reject(error)
   }
