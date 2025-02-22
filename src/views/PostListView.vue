@@ -12,7 +12,8 @@ const currentPost = ref<Post | null>(null)
 // 加载数据
 const loadData = async () => {
   loading.value = true
-  posts.value = await api.getPosts()
+  const response = await api.getPosts()
+  posts.value = response
   loading.value = false
 }
 

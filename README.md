@@ -136,12 +136,19 @@ export default defineConfig({
 #### Axios封装
 ```js
 // utils/request.ts
-import axios from 'axios'
+import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import { ElMessage } from 'element-plus'
 
-const service = axios.create({
+// 自定义 Axios 返回类型：拦截器处理后直接返回数据 T，而非 AxiosResponse<T>
+interface CustomAxiosInstance extends AxiosInstance {
+  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
+  // 其他方法同理（post、put 等）
+}
+
+const service: CustomAxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000
-})
+}) as CustomAxiosInstance // 类型断言是关键！
 
 // 请求拦截
 service.interceptors.request.use(config => {
@@ -160,6 +167,12 @@ service.interceptors.response.use(
     if (error.response?.status === 401) {
         localStorage.removeItem('token')
         window.location.href = '/login'
+    } else if (error.response?.status === 400) {
+      ElMessage({
+        showClose: true,
+        message: error.response?.data?.error,
+        type: 'error',
+      })
     }
     return Promise.reject(error)
   }
