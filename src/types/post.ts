@@ -5,3 +5,8 @@ export interface Post {
     title: string
     body: string
 }
+
+export interface PostParams {
+    title: string
+    body: string
+}

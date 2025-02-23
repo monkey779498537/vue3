@@ -1,13 +1,13 @@
 import { createApp } from 'vue'
-import './style.css';
+import './style.css'
 import App from './App.vue'
-import router from './router';
+import router from './router'
 import { createPinia } from 'pinia'
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
 // 创建 Pinia 实例
-const pinia = createPinia();
+const pinia = createPinia()
 
 createApp(App) // 创建vue实例
     .use(router) // 挂载路由
