@@ -25,6 +25,26 @@ npm install eslint prettier eslint-plugin-vue -D
 npm install --save-dev @types/node
 ```
 
+#### 代码风格规范
+- ESLint + Prettier：代码风格检查
+    - eslint-plugin-vue用于Vue的规则
+    - eslint-config-prettier来避免冲突
+    - eslint-plugin-prettier
+    - @typescript-eslint的解析器，用了TypeScript的话
+    ```js
+    // 前面已经安装
+    npm install eslint prettier -D
+    npm install -D eslint-plugin-vue eslint-config-prettier eslint-plugin-prettier @typescript-eslint/parser
+    ```
+    - 配置文件
+        - 需要注意，如果安装的是eslint9+版本，不能使用.eslintrc.cjs进行配置，必须改成eslint.config.js，否则lint的时候报错
+            - 处理以上版本问题，要么降低版本保留原配置.eslintrc.cjs，要么迁移eslint.config.js
+    ```js
+
+    ```
+
+- Husky + lint-staged：Git 提交校验
+
 #### 挂载组件
 - `src/main.ts`: 下载好的组件需要挂载到vue实例上进行使用
 ```js

@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "include": [
+      "src/**/*.ts",       // 包含所有 TS 文件
+      "src/**/*.vue",      // 包含所有 Vue 文件
+      "types/**/*.d.ts",    // 包含类型声明文件
+      "*.config.ts", // 根目录配置文件
+      "*.config.js", // 根目录配置文件
+    ],
+    "compilerOptions": {
+      "noEmit": true,       // 禁用编译输出（仅用于类型检查）
+      "types": ["vite/client"]
+    }
+  }

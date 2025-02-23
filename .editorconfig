@@ -1,0 +1,15 @@
+# 根配置文件 (阻止向上查找其他 .editorconfig)
+root = true
+
+# 所有文件通用规则
+[*]
+charset = utf-8          # 文件编码
+indent_style = space     # 缩进风格 (空格代替制表符)
+indent_size = 4          # 缩进空格数
+end_of_line = lf         # 换行符类型 (Linux/macOS 风格)
+insert_final_newline = true  # 文件末尾添加空行
+trim_trailing_whitespace = true  # 删除行尾空格
+
+# Markdown 文件特殊规则
+[*.md]
+trim_trailing_whitespace = false  # 保留行尾空格 (防止破坏标记语法)

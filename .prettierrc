@@ -1,0 +1,10 @@
+{
+  "semi": false,          // 语句结尾不加分号
+  "singleQuote": true,    // 使用单引号代替双引号
+  "tabWidth": 4,          // 缩进空格数
+  "trailingComma": "none",// 对象/数组最后一项不加逗号
+  "printWidth": 100,      // 每行代码最大长度 (超过自动换行)
+  "arrowParens": "avoid", // 箭头函数单参数时省略括号 (如 x => x)
+  "htmlWhitespaceSensitivity": "ignore", // 解决 Vue 模板格式化空格问题
+  "endOfLine": "auto"     // 自动识别操作系统换行符 (LF/CRLF)
+}
