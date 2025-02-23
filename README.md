@@ -158,7 +158,35 @@ npm install --save-dev @types/node
     },
     ```
 
-- Husky + lint-staged：Git 提交校验
+- Husky(Git Hooks管理) + lint-staged(Git 仅检查暂存区文件)：Git 提交校验
+- Husky
+
+```js
+// 安装
+npm install husky lint-staged --save-dev
+
+// 初始化 Husky
+npx husky install
+// # 将 husky install 添加到项目初始化脚本（确保团队协作时自动安装）
+npm pkg set scripts.prepare="husky install"
+
+// 创建 pre-commit 钩子
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
+- 配置 lint-staged (仅检查暂存区文件)
+
+```js
+{
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": [
+      "prettier --write",  // 自动格式化代码（可选）
+      "eslint --fix --max-warnings=0", // 自动修复可修复的错误，且警告视为错误
+      "git add" // 重新添加修复后的文件
+    ]
+  }
+}
+```
 
 #### 挂载组件
 
