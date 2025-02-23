@@ -1,12 +1,14 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
 
+console.log(111)
+
 // 自定义 Axios 返回类型：拦截器处理后直接返回数据 T，而非 AxiosResponse<T>
 interface CustomAxiosInstance extends AxiosInstance {
     get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
     // 其他方法同理（post、put 等）
     // POST
-    post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T>
+    post<T = any>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T>
 
     // PUT
     put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T>
