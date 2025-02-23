@@ -133,6 +133,45 @@ export default defineConfig({
 })
 ```
 
+#### plugin插件安装
+- `vite-plugin-checker`
+  - 专门为 Vite 设计的插件，能在开发阶段实时检查 TypeScript 错误
+  - 原因：
+    - Vite默认使用esbuild来转换TypeScript，但这只是在编译时进行转译，并不会进行类型检查。
+    - 默认情况下，Vite在开发服务器（dev）运行时，并不会执行TypeScript的类型检查
+    - build时可能会使用tsc来进行类型检查
+  ```js
+  // 安装插件
+  npm install vite-plugin-checker --save-dev
+
+  // vite.config.ts 配置插件
+  import checker from 'vite-plugin-checker'
+  export default defineConfig({
+    plugins: [
+      vue(),
+      checker({
+        // 如果是配置 tsconfig.app.json 需要手动指定
+        // 显式启用 Vue 类型检查
+        vueTsc: {
+            tsconfigPath: "./tsconfig.app.json", // 显式指定配置
+        },
+      }),
+    ],
+  })
+
+  // tsconfig.app.json
+  {
+    "compilerOptions": {
+        "strict": true,
+        "isolatedModules": true // 必须启用，避免 Vite 的 esbuild 问题
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+  }
+  ```
+    
+
+      
+
 #### Axios封装
 ```js
 // utils/request.ts
